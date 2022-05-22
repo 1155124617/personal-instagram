@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Instagram Admin Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-image: url('/background-images/bg-1.jpeg');">
+    <div class="container">
+        <a href="/" class="label label-primary">Main Page</a>
+    </div>
+    <div class="container">
+        <a href="/admin/create_tables">
+            <button type="button" class="btn btn-success">Create User and Image Tables</button>
+        </a>
+    </div>
+
+    <div class="container">
+        <span class="label label-info">Delete Users</span>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Password</th>
+                    <th>Create Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody th:each="user : ${users}">
+                <tr>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.password}"></td>
+                    <td th:text="${user.timestamp}"></td>
+                    <td>
+                        <a class="caption">
+                            <form action="/admin/delete_user" method="post">
+                                <input type="text" th:value="${user.name}" id="delete-username" name="delete-username"
+                                       style="display:none;">
+                                <input type="submit" value="delete" class="btn btn-link">
+                            </form>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <span class="label label-info">Delete Images</span>
+        <table class="table table-border">
+            <thead>
+                <tr>
+                    <th>Picture</th>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th>Create Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody th:each="image,iterStat : ${images}">
+                <tr>
+                    <td>
+                        <img class="img-thumbnail" th:src="@{${image_paths[iterStat.index]}}">
+                    </td>
+                    <td th:text="${image.fileName}"></td>
+                    <td th:text="${image.owner}"></td>
+                    <td th:text="${image.uploadTime}"></td>
+                    <td>
+                        <a class="caption">
+                            <form action="/admin/delete_image" method="post">
+                                <input type="text" th:value="${image.fileName}" id="delete-filename"
+                                       name="delete-filename" style="display:none;">
+                                <input type="text" th:value="${image.owner}" id="delete-owner"
+                                       name="delete-owner" style="display:none;">
+                                <input type="submit" value="delete" class="btn btn-link">
+                            </form>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Personal Instagram</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body style="background-image: url('/background-images/bg-1.jpeg');">
+        <div class="container">
+            <h2 class="float-center" align="center">Personal Instagram</h2>
+        </div>
+
+        <div class="container">
+            <div align="center">
+                <a class="label label-primary float-right" href="/admin">Admin Page</a>
+                <a th:unless="${user_logged_in}" href="/user/signin" class="label label-success">Sign In</a>
+                <a href="/user/signup" class="label label-primary">Sign Up</a>
+            </div>
+            <div align="right" th:if="${user_logged_in}">
+                Hi!
+                <span th:text="${username}"></span>
+                <a href="/user/logout">
+                    <button type="button" class="btn btn-link">Log Out</button>
+                </a>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="container">
+            <button class="btn btn-info">Display of Our Results
+                <span class="badge" th:text="${num_images}"></span>
+            </button><br>
+            <div class="row" th:each="images : ${image_groups}">
+                <div class="col-md-4" th:each="image : ${images}">
+                    <div class="thumbnail">
+                        <a th:href="@{${image}}">
+                            <img th:src="@{${image}}" class="img-fluid" style="height:200px;">
+                            <div class="caption">
+                                <p th:text="${image}"></p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <br>
+            <form action="/user/upload" method="post", enctype="multipart/form-data">
+                <label for="upload-image">Upload Image</label><br>
+                <input type="file" id="upload-image" name="upload-image" accept="image/jpg, image/jpeg, iage/png">
+                <br>
+                <input type="submit" value="upload"><br>
+            </form>
+        </div>
+
+        <div class="container" align="right">
+            User IP Address :
+            <a th:text="${ip_address}"></a>
+            <br>
+            Host Name:
+            <a th:text="${host_name}"></a>
+        </div>
+
+        <br>
+        <br>
+    </body>
+
+</html>
