@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -198,6 +199,24 @@ public class PostgresDataSource {
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM image_blobs WHERE owner=?");
         stmt.setString(1, owner);
         stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void dropUserTable() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate("DROP TABLE IF EXISTS user_info");
+        stmt.close();
+    }
+
+    public void dropImageTable() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate("DROP TABLE IF EXISTS images");
+        stmt.close();
+    }
+
+    public void dropImageBlobTable() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate("DROP TABLE IF EXISTS image_blobs");
         stmt.close();
     }
 

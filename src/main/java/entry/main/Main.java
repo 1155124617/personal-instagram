@@ -265,4 +265,19 @@ public class Main {
             return "error";
         }
     }
+
+    @RequestMapping("/admin/drop_tables")
+    String dropTables(Map<String, Object> model) {
+        try {
+            postgresDataSource.dropUserTable();
+            postgresDataSource.dropImageTable();
+            postgresDataSource.dropImageBlobTable();
+
+            return "redirect:/";
+        } catch (SQLException e) {
+            System.out.println("Failed to drop tables");
+            model.put("message", "Failed to drop tables");
+            return "errpr";
+        }
+    }
 }
