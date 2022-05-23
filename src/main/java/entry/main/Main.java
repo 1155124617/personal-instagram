@@ -277,7 +277,7 @@ public class Main {
         } catch (SQLException e) {
             System.out.println("Failed to drop tables");
             model.put("message", "Failed to drop tables");
-            return "errpr";
+            return "error";
         }
     }
 }
