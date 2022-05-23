@@ -1,6 +1,7 @@
 package entry.main;
 
 import classes.Image;
+import classes.ImageBlob;
 import classes.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -34,6 +35,20 @@ public class Main {
     @Autowired
     private PostgresDataSource postgresDataSource;
 
+    public void createIfNotExists(Image image) throws SQLException, IOException {
+        String dir = "user-images/" + image.getOwner();
+
+        if (!FileUtil.exists(dir + "/" + image.getFileName())) {
+            ImageBlob imageBlob = postgresDataSource.getImageBlobByName(image.getFileName());
+            FileUtil.saveFile(dir, imageBlob.getImageName(), imageBlob.getContent());
+        }
+    }
+
+    public void createIfNotExists(List<Image> images) throws SQLException, IOException {
+        for (Image image : images) {
+            createIfNotExists(image);
+        }
+    }
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     String index(HttpServletRequest request, Map<String, Object> model, HttpSession session) {
@@ -51,7 +66,8 @@ public class Main {
         }
 
         try {
-            List<Image> images = postgresDataSource.getImages();
+            List<Image> images = postgresDataSource.getAllImages();
+            createIfNotExists(images);
             List<String> imagePaths = new LinkedList<>();
 
             for (Image image : images) {
@@ -65,7 +81,7 @@ public class Main {
 
             model.put("num_images", images.size());
             model.put("image_groups", imageGroups);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             model.put("message", e);
             System.out.println("Failed to get images from the database");
             return "error";
@@ -160,8 +176,9 @@ public class Main {
 
         String uploadDir = "user-images/" + image.getOwner();
         try {
-            postgresDataSource.save(image);
             FileUtil.saveFile(uploadDir, image.getFileName(), image.getMultipartFile());
+            postgresDataSource.save(image);
+            postgresDataSource.save(new ImageBlob(image.getFileName(), multipartFile.getBytes(), owner));
             System.out.println("Upload image successfully");
             return "redirect:/";
         } catch (IOException e) {
@@ -181,6 +198,7 @@ public class Main {
             List<User> users = postgresDataSource.getAllUsers();
             List<Image> images = postgresDataSource.getAllImages();
 
+            createIfNotExists(images);
             List<String> imagePaths = new LinkedList<>();
             for (Image image : images) {
                 imagePaths.add("user-images/" + image.getOwner() + "/" + image.getFileName());
@@ -191,7 +209,7 @@ public class Main {
             model.put("images", images);
 
             return "admin";
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Failed to get all users");
             model.put("message", "Failed to get all users");
             return "error";
@@ -204,6 +222,7 @@ public class Main {
         try {
             postgresDataSource.createUserTable();
             postgresDataSource.createImageTable();
+            postgresDataSource.createImageBlobTable();
             System.out.println("Create successfully");
             return "redirect:/";
         } catch (Exception e) {
@@ -221,6 +240,7 @@ public class Main {
             FileUtil.deleteDirectory(deleteDir);
             postgresDataSource.deleteUserByName(userName);
             postgresDataSource.deleteImageByOwner(userName);
+            postgresDataSource.deleteImageBlobByOwner(userName);
             return "redirect:/admin";
         } catch (Exception e) {
             System.out.println("Failed to delete directory " + deleteDir);
@@ -237,6 +257,7 @@ public class Main {
         try {
             FileUtil.deleteFile(deleteDir);
             postgresDataSource.deleteImageByName(fileName);
+            postgresDataSource.deleteImageBlobByName(fileName);
             return "redirect:/admin";
         } catch (Exception e) {
             System.out.println("Failed to delete " + fileName + " in database");

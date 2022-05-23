@@ -2,6 +2,7 @@ package utils;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,18 @@ public class FileUtil {
         }
 
         InputStream inputStream = multipartFile.getInputStream();
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public static void saveFile(String uploadDir, String fileName, byte[] bytes) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        InputStream inputStream = new ByteArrayInputStream(bytes);
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
     }
@@ -48,5 +61,10 @@ public class FileUtil {
                 throw new Exception();
             }
         }
+    }
+
+    public static boolean exists(String fileDir) {
+        File file = new File(fileDir);
+        return file.exists();
     }
 }

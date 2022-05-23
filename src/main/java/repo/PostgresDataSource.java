@@ -1,6 +1,7 @@
 package repo;
 
 import classes.Image;
+import classes.ImageBlob;
 import classes.User;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -46,6 +47,15 @@ public class PostgresDataSource {
         stmt.close();
     }
 
+    public void createImageBlobTable() throws Exception {
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate("CREATE TABLE IF NOT EXISTS image_blobs (" +
+                "filename varchar(50) primary key, " +
+                "content bytea not null, " +
+                "owner varchar(20) not null)");
+        stmt.close();
+    }
+
     public void save(User user) throws Exception {
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO user_info VALUES (?, ?, ?)");
         stmt.setString(1, user.getName());
@@ -60,6 +70,15 @@ public class PostgresDataSource {
         stmt.setString(1, image.getFileName());
         stmt.setString(2, image.getOwner());
         stmt.setTimestamp(3, image.getUploadTime());
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void save(ImageBlob imageBlob) throws Exception {
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO image_blobs VALUES (?, ?, ?)");
+        stmt.setString(1, imageBlob.getImageName());
+        stmt.setBytes(2, imageBlob.getContent());
+        stmt.setString(3, imageBlob.getOwner());
         stmt.executeUpdate();
         stmt.close();
     }
@@ -134,6 +153,19 @@ public class PostgresDataSource {
         return images;
     }
 
+    public ImageBlob getImageBlobByName(String imageName) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM image_blobs WHERE filename=?");
+        stmt.setString(1, imageName);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return new ImageBlob(rs.getString("filename"),
+                                 rs.getBytes("content"),
+                                 rs.getString("owner"));
+        } else {
+            return null;
+        }
+    }
+
     public void deleteUserByName(String userName) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM user_info WHERE username=?");
         stmt.setString(1, userName);
@@ -150,6 +182,20 @@ public class PostgresDataSource {
 
     public void deleteImageByOwner(String owner) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM images WHERE owner=?");
+        stmt.setString(1, owner);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void deleteImageBlobByName(String imageName) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM image_blobs WHERE filename=?");
+        stmt.setString(1, imageName);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void deleteImageBlobByOwner(String owner) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM image_blobs WHERE owner=?");
         stmt.setString(1, owner);
         stmt.executeUpdate();
         stmt.close();
