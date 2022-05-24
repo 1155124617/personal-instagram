@@ -91,12 +91,12 @@ public class Main {
     }
 
     @RequestMapping(value="/user/signup", method = RequestMethod.GET)
-    String signup() {
+    String signUp() {
         return "signup";
     }
 
     @RequestMapping(value="/user/signup", method=RequestMethod.POST)
-    String signup(WebRequest request, Map<String, Object> model) {
+    String signUp(WebRequest request, Map<String, Object> model) {
         String userName = request.getParameter("signup-user-name");
         String password = request.getParameter("signup-password");
         Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
@@ -118,12 +118,12 @@ public class Main {
     }
 
     @RequestMapping(value="/user/signin", method = RequestMethod.GET)
-    String signin() {
+    String signIn() {
         return "signin";
     }
 
     @RequestMapping(value="/user/signin", method=RequestMethod.POST)
-    String signin(WebRequest request, Map<String, Object> model, HttpSession session) {
+    String signIn(WebRequest request, Map<String, Object> model, HttpSession session) {
         String userName = request.getParameter("signin-user-name");
         String password = request.getParameter("signin-password");
 
