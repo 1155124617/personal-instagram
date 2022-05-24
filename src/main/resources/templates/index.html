@@ -4,8 +4,10 @@
         <title>Personal Instagram</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="icon" href="/background-images/Instagram_icon.png" type="image/x-icon">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="/scripts/popup_window.js"></script>
     </head>
     <body style="background-image: url('/background-images/bg-1.jpeg');">
         <div class="container">
@@ -42,6 +44,11 @@
                                 <p th:text="${image}"></p>
                             </div>
                         </a>
+                        <br>
+                        <form action="/user/edit_image" method="post">
+                            <input type="text" th:value="${image}" style="display:none;" name="img_url">
+                            <input type="submit" class="btn btn-link" value="Edit">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -63,6 +70,11 @@
             <br>
             Host Name:
             <a th:text="${host_name}"></a>
+        </div>
+
+        <div class="container">
+            <button type="button" class="btn btn-link" id="test-button"
+                    th:text="${'/user-images/Ding Baizeng/WechatIMG210.jpeg'}"></button>
         </div>
 
         <br>

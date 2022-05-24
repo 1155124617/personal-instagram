@@ -71,7 +71,7 @@ public class Main {
             List<String> imagePaths = new LinkedList<>();
 
             for (Image image : images) {
-                imagePaths.add("user-images/" + image.getOwner() + "/" + image.getFileName());
+                imagePaths.add("/user-images/" + image.getOwner() + "/" + image.getFileName());
             }
 
             List<List<String>> imageGroups = new LinkedList<>();
@@ -192,7 +192,13 @@ public class Main {
         }
     }
 
-    @RequestMapping("admin")
+    @RequestMapping(value="/user/edit_image", method = RequestMethod.POST)
+    String editImage(@RequestParam("img_url") String imgUrl, Map<String, Object> model) {
+        model.put("img_url", imgUrl);
+        return "edit";
+    }
+
+    @RequestMapping("/admin")
     String adminPage(Map<String, Object> model) {
         try {
             List<User> users = postgresDataSource.getAllUsers();
@@ -201,7 +207,7 @@ public class Main {
             createIfNotExists(images);
             List<String> imagePaths = new LinkedList<>();
             for (Image image : images) {
-                imagePaths.add("user-images/" + image.getOwner() + "/" + image.getFileName());
+                imagePaths.add("/user-images/" + image.getOwner() + "/" + image.getFileName());
             }
 
             model.put("users", users);
