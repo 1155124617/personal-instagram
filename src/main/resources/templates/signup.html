@@ -4,21 +4,26 @@
     <meta charset="UTF-8">
     <title>Personal Instagram Sign Up</title>
     <link rel="icon" href="/background-images/Instagram_icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
-<body>
-    <div>
-        Sign Up Form
-        <br>
+<body style="background-image: url('/background-images/bg-1.jpeg');
+        align-items:center;">
+    <div class="container" align="center">
+        <h3 class="label label-primary">Sign Up Form</h3>
+        <br><br>
         <form action="/user/signup" method="post">
-            <label for="signup-user-name">User Name</label><br>
-            <input type="text" id="signup-user-name" name="signup-user-name"><br>
-            <label for="signup-password">Password</label><br>
-            <input type="password" id="signup-password" name="signup-password"><br>
-            <input type="submit" value="Submit"><br>
+            <label class="label label-default" for="signup-user-name">User Name</label><br><br>
+            <input type="text" id="signup-user-name" name="signup-user-name"><br><br>
+            <label class="label label-default" for="signup-password">Password</label><br><br>
+            <input type="password" id="signup-password" name="signup-password"><br><br>
+            <input type="submit" class="btn btn-default" value="Submit">
+            <a href="/">
+                <button class="btn btn-success" type="button">Go back to the main page</button>
+            </a>
         </form>
     </div>
-    <a href="/">
-        <button type="button">Go back to the main page</button>
-    </a>
+
 </body>
 </html>
