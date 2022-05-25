@@ -7,8 +7,8 @@ console.log('img_edit.js is running :)');
 
 // const width = htmlLeftContainer.width*0.8;
 // const height = width/canvasRatio;
-const width = 320;
-const height = 240;
+const width = 500;
+const height = 375;
 
 let uploadedImage = null;
 let preset = null; // grayscale, black & white, etc.
@@ -33,7 +33,7 @@ function setup() {
     pixelDensity(1);
 
     // Image dropzone
-    let dropzone = select('#dropzone');
+    /*let dropzone = select('#dropzone');
     dropzone.dragOver(() => {
         dropzone.addClass('dragover');
     });
@@ -46,7 +46,7 @@ function setup() {
         // uploadedImage.hide(); // don't show in DOM
         uploadedImage = loadImage(file.data); // this way, uploadedImage is a p5 image and we can use the .loadPixels method on it
         console.log(uploadedImage);
-    }, () => dropzone.removeClass('dragover'));
+    }, () => dropzone.removeClass('dragover'));*/
     uploadedImage = loadImage($('#img_url').text());
     console.log(uploadedImage);
 
@@ -62,6 +62,7 @@ function setup() {
     // redSlider.input(redraw);
     // greenSlider.input(redraw);
     // blueSlider.input(redraw);
+    util();
 }
 
 ///// DRAW /////
@@ -123,47 +124,49 @@ function mouseClicked() {
     }
 }
 
-$('#preset-button-row .square-button').click(function() {
-    let selected = this.dataset.preset;
-    if(selected === 'none') preset = null;
-    else preset = selected;
+function util () {
+    $('#preset-button-row .square-button').click(function() {
+        let selected = this.dataset.preset;
+        if(selected === 'none') preset = null;
+        else preset = selected;
 
-    $('#preset-button-row .square-button').removeClass('selected');
-    $(`[data-preset=${selected}]`).addClass('selected');
-});
+        $('#preset-button-row .square-button').removeClass('selected');
+        $(`[data-preset=${selected}]`).addClass('selected');
+    });
 
-htmlColorBox.click(function() {
-    isPickingColor = !isPickingColor;
-    $('body').addClass('picking-color');
-});
+    htmlColorBox.click(function() {
+        isPickingColor = !isPickingColor;
+        $('body').addClass('picking-color');
+    });
 
-$('#download-button').click(() => {
-    // Don't try to download if there's no image yet
-    if(uploadedImage === null) {
-        alert('No image has been uploaded!');
-        return;
-    }
+    $('#download-button').click(() => {
+        // Don't try to download if there's no image yet
+        if(uploadedImage === null) {
+            alert('No image has been uploaded!');
+            return;
+        }
 
-    uploadedImage.loadPixels();
-    
-    // Backup pixels
-    let originalValues = []; 
-    uploadedImage.pixels.forEach(value => originalValues.push(value));
+        uploadedImage.loadPixels();
 
-    // Apply filters
-    if(preset === null) sliderFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
-    else if (preset === 'grey') grayscaleFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
-    else if (preset === 'bw') blackAndWhiteFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
-    else if (preset === 'sc') singleColorFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
+        // Backup pixels
+        let originalValues = [];
+        uploadedImage.pixels.forEach(value => originalValues.push(value));
 
-    uploadedImage.updatePixels();
-    save(uploadedImage, 'edit.png');
+        // Apply filters
+        if(preset === null) sliderFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
+        else if (preset === 'grey') grayscaleFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
+        else if (preset === 'bw') blackAndWhiteFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
+        else if (preset === 'sc') singleColorFilter(uploadedImage.pixels, uploadedImage.width, uploadedImage.height);
 
-    // Restore original pixels
-    uploadedImage.loadPixels();
-    originalValues.forEach((value, index) => uploadedImage.pixels[index] = value);
-    uploadedImage.updatePixels();
-});
+        uploadedImage.updatePixels();
+        save(uploadedImage, $('#img_url').text().split('/').pop());
+
+        // Restore original pixels
+        uploadedImage.loadPixels();
+        originalValues.forEach((value, index) => uploadedImage.pixels[index] = value);
+        uploadedImage.updatePixels();
+    });
+}
 
 ///// FILTERS /////
 function sliderFilter(pixels, width, height) {
